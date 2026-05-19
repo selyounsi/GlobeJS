@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GlobeJS — Minimal Example</title>
+    <meta name="description" content="The smallest possible GlobeJS setup — one container, one script tag, zero config.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://selyounsi.github.io/GlobeJS/demo/minimal.html">
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%23004972'/%3E%3Cpath d='M50 6 a44 44 0 1 0 0.001 0z' fill='none' stroke='%23F39323' stroke-width='3'/%3E%3Cellipse cx='50' cy='50' rx='44' ry='15' fill='none' stroke='%23F39323' stroke-width='2'/%3E%3C/svg%3E">
+
+    <link rel="stylesheet" href="../dist/main.min.css">
+</head>
+<body>
+    <div id="globe-container" style="width: 100vw; height: 100vh;"></div>
+
+    <script src="../dist/main.min.js"></script>
+    <script>
+        new BrandGlobe({ container: '#globe-container' });
+    </script>
+</body>
+</html>

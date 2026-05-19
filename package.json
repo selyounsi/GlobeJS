@@ -1,0 +1,12 @@
+{
+  "name": "globejs",
+  "version": "1.0.0",
+  "description": "Rotating 3D world globe in brand colors.",
+  "scripts": {
+    "build": "node scripts/build.js",
+    "watch": "node scripts/build.js --watch"
+  },
+  "devDependencies": {
+    "esbuild": "^0.23.0"
+  }
+}

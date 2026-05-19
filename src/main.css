@@ -1,0 +1,18 @@
+/* Globe sizes itself to the parent's width; height follows via 1:1 aspect-ratio.
+   Override `aspect-ratio` (or set an explicit height) if you want a non-square area. */
+#globe-container {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    position: relative;
+    overflow: visible;
+    cursor: grab;
+}
+
+#globe-container:active {
+    cursor: grabbing;
+}
+
+/* Prevent the 4px inline-gap browsers add below a <canvas>. */
+#globe-container canvas {
+    display: block;
+}

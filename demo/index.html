@@ -1,0 +1,857 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>GlobeJS — Interactive 3D World Globe Playground</title>
+    <meta name="description" content="Configure a branded 3D world globe with hubs, connections, themes and live theming. Copy the snippet and drop it into your site.">
+    <meta name="keywords" content="3d globe, world map, three.js, globe.gl, javascript globe, brand globe, interactive globe, hub map, connection map">
+    <meta name="author" content="selyounsi">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://selyounsi.github.io/GlobeJS/demo/">
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://selyounsi.github.io/GlobeJS/demo/">
+    <meta property="og:title" content="GlobeJS — Interactive 3D World Globe">
+    <meta property="og:description" content="Drop-in 3D globe with pins, animated connections and live theming. Configure in the browser, copy the snippet.">
+    <meta property="og:site_name" content="GlobeJS">
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image">
+    <meta name="twitter:title" content="GlobeJS — Interactive 3D World Globe">
+    <meta name="twitter:description" content="Drop-in 3D globe with pins, animated connections and live theming.">
+
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='44' fill='%23004972'/%3E%3Cpath d='M50 6 a44 44 0 1 0 0.001 0z' fill='none' stroke='%23F39323' stroke-width='3'/%3E%3Cellipse cx='50' cy='50' rx='44' ry='15' fill='none' stroke='%23F39323' stroke-width='2'/%3E%3C/svg%3E">
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="../dist/main.min.css">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        input[type="range"] { accent-color: #F39323; }
+        input[type="color"] { background: transparent; }
+        input[type="color"]::-webkit-color-swatch-wrapper { padding: 0; }
+        input[type="color"]::-webkit-color-swatch { border: 1px solid rgb(71 85 105); border-radius: 0.375rem; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 overflow-hidden h-screen">
+
+    <div class="flex h-full">
+
+        <!-- LEFT SIDEBAR — Appearance -->
+        <aside class="w-72 shrink-0 bg-slate-800/60 border-r border-slate-700 overflow-y-auto p-5 space-y-6">
+            <div>
+                <h1 class="text-xl font-bold text-white">GlobeJS</h1>
+                <p class="text-xs text-slate-400 mt-1">Interactive playground — tweak the controls and the globe updates live.</p>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Themes</h2>
+                <div class="grid grid-cols-2 gap-1.5">
+                    <button data-theme="brand"   class="theme-btn py-1.5 px-2 text-xs rounded bg-slate-700 hover:bg-slate-600">Brand</button>
+                    <button data-theme="dark"    class="theme-btn py-1.5 px-2 text-xs rounded bg-slate-700 hover:bg-slate-600">Midnight</button>
+                    <button data-theme="sunset"  class="theme-btn py-1.5 px-2 text-xs rounded bg-slate-700 hover:bg-slate-600">Sunset</button>
+                    <button data-theme="ocean"   class="theme-btn py-1.5 px-2 text-xs rounded bg-slate-700 hover:bg-slate-600">Ocean</button>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Colors</h2>
+                <div class="space-y-3">
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Globe (sphere)</span>
+                        <input id="c-globe" type="color" value="#004972" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Accent (countries)</span>
+                        <input id="c-accent" type="color" value="#F39323" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Country borders</span>
+                        <input id="c-stroke" type="color" value="#ffb85c" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Atmosphere</span>
+                        <input id="c-atmosphere" type="color" value="#1d6791" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Wireframe</span>
+                        <input id="c-wireframe" type="color" value="#ffffff" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Hubs</span>
+                        <input id="c-hub" type="color" value="#ffffff" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                    <label class="block">
+                        <span class="text-xs uppercase tracking-wide text-slate-400 mb-1 block">Arc lines</span>
+                        <input id="c-arc" type="color" value="#ffaa3c" class="w-full h-9 rounded cursor-pointer">
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Opacity</h2>
+                <div class="space-y-3">
+                    <label class="block">
+                        <span class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span class="uppercase tracking-wide">Globe</span>
+                            <span id="v-globe-opacity">1.00</span>
+                        </span>
+                        <input id="r-globe-opacity" type="range" min="0" max="1" step="0.05" value="1" class="w-full">
+                    </label>
+                    <label class="block">
+                        <span class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span class="uppercase tracking-wide">Wireframe</span>
+                            <span id="v-wf-opacity">0.55</span>
+                        </span>
+                        <input id="r-wf-opacity" type="range" min="0" max="1" step="0.05" value="0.55" class="w-full">
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Layers</h2>
+                <div class="space-y-2 text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input id="t-wireframe" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Wireframe overlay
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input id="t-atmosphere" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Atmosphere glow
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input id="t-countries" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Country borders
+                    </label>
+                </div>
+            </div>
+        </aside>
+
+        <!-- CENTER — Globe stage -->
+        <main class="flex-1 flex items-center justify-center p-8 min-w-0">
+            <div class="w-full max-w-[640px] aspect-square">
+                <div id="globe-container"></div>
+            </div>
+        </main>
+
+        <!-- RIGHT SIDEBAR — Behavior & Layout -->
+        <aside class="w-72 shrink-0 bg-slate-800/60 border-l border-slate-700 overflow-y-auto p-5 space-y-6">
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Sizing</h2>
+                <div class="space-y-3">
+                    <label class="block">
+                        <span class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span class="uppercase tracking-wide">Scale</span>
+                            <span id="v-scale">1.00</span>
+                        </span>
+                        <input id="r-scale" type="range" min="0.4" max="2" step="0.05" value="1" class="w-full">
+                    </label>
+                    <label class="block">
+                        <span class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span class="uppercase tracking-wide">Padding</span>
+                            <span id="v-padding">18 px</span>
+                        </span>
+                        <input id="r-padding" type="range" min="0" max="80" step="2" value="18" class="w-full">
+                    </label>
+                    <label class="block">
+                        <span class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span class="uppercase tracking-wide">Overflow</span>
+                            <span id="v-overflow">80 px</span>
+                        </span>
+                        <input id="r-overflow" type="range" min="0" max="200" step="10" value="80" class="w-full">
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Rotation</h2>
+                <div class="space-y-3">
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                        <input id="t-rotation" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Auto-rotate
+                    </label>
+                    <label class="block">
+                        <span class="flex justify-between text-xs text-slate-400 mb-1">
+                            <span class="uppercase tracking-wide">Speed</span>
+                            <span id="v-rotation-speed">0.55</span>
+                        </span>
+                        <input id="r-rotation-speed" type="range" min="-3" max="3" step="0.05" value="0.55" class="w-full">
+                    </label>
+                    <label class="flex items-center gap-2 text-sm cursor-pointer">
+                        <input id="t-interaction" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Drag to rotate
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Hubs &amp; Lines</h2>
+                <div class="space-y-2 text-sm">
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input id="t-points" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Show pins
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input id="t-rings" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Pulsating rings
+                    </label>
+                    <label class="flex items-center gap-2 cursor-pointer">
+                        <input id="t-arcs" type="checkbox" checked class="accent-orange-500 w-4 h-4">
+                        Connection lines
+                    </label>
+                </div>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Hubs</h2>
+                <div class="grid grid-cols-2 gap-1.5 mb-2">
+                    <button id="btn-pin-mode" class="py-1.5 px-2 text-xs rounded bg-slate-700 hover:bg-slate-600 transition">
+                        <span id="pin-mode-label">Drop on globe</span>
+                    </button>
+                    <button id="btn-hub-modal" class="py-1.5 px-2 text-xs rounded bg-slate-700 hover:bg-slate-600 transition">
+                        Enter manually
+                    </button>
+                </div>
+                <p class="text-xs text-slate-500 mb-2">Click a hub below to fly there.</p>
+                <ul id="hubs-list" class="space-y-1 mb-3 text-xs max-h-56 overflow-y-auto"></ul>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Connections</h2>
+                <button id="btn-conn-modal" class="w-full py-1.5 px-2 mb-2 text-xs rounded bg-slate-700 hover:bg-slate-600 transition">
+                    Add connection
+                </button>
+                <ul id="conns-list" class="space-y-1 text-xs max-h-56 overflow-y-auto"></ul>
+            </div>
+
+            <div>
+                <h2 class="text-sm font-semibold text-slate-300 uppercase tracking-wider mb-3 border-b border-slate-700 pb-2">Use in your project</h2>
+                <div class="grid grid-cols-2 gap-1.5 mb-2">
+                    <a href="../dist/main.min.js"  download class="py-1.5 px-2 text-xs text-center rounded bg-slate-700 hover:bg-slate-600 transition">⬇ main.min.js</a>
+                    <a href="../dist/main.min.css" download class="py-1.5 px-2 text-xs text-center rounded bg-slate-700 hover:bg-slate-600 transition">⬇ main.min.css</a>
+                </div>
+                <button id="btn-copy" class="w-full py-2 px-3 text-sm font-medium rounded bg-orange-500 hover:bg-orange-400 text-white transition">
+                    Copy config to clipboard
+                </button>
+                <span id="copy-feedback" class="text-xs text-emerald-400 hidden mt-1 block">Copied!</span>
+                <details class="mt-3 text-xs">
+                    <summary class="cursor-pointer text-slate-400 hover:text-slate-200">Show HTML snippet</summary>
+<pre class="mt-2 p-2 bg-slate-900 border border-slate-700 rounded text-[10px] leading-snug text-slate-300 whitespace-pre-wrap break-words">&lt;link rel="stylesheet" href="main.min.css"&gt;
+&lt;div id="globe-container" style="width:100vw;height:100vh"&gt;&lt;/div&gt;
+&lt;script src="main.min.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  // paste the copied config here
+&lt;/script&gt;</pre>
+                </details>
+            </div>
+
+            <button id="btn-reset" class="w-full py-2 px-3 text-sm font-medium rounded bg-slate-700 hover:bg-slate-600 transition">
+                Reset to defaults
+            </button>
+        </aside>
+
+    </div>
+
+    <!-- Hub modal -->
+    <div id="hub-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 w-full max-w-sm shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-1">Add hub</h3>
+            <p id="m-hint" class="text-xs text-slate-400 mb-4">Search a place or enter coordinates manually.</p>
+            <div class="space-y-3">
+                <div>
+                    <label for="m-search" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">Search place</label>
+                    <div class="flex gap-2">
+                        <input id="m-search" type="text" autocomplete="off" class="flex-1 bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-orange-400" placeholder="e.g. Berlin, Mount Everest…">
+                        <button id="m-search-go" class="bg-slate-700 hover:bg-slate-600 rounded px-3 text-xs transition">Search</button>
+                    </div>
+                    <ul id="m-search-results" class="hidden mt-2 space-y-0.5 text-xs max-h-40 overflow-y-auto bg-slate-900 border border-slate-700 rounded"></ul>
+                </div>
+                <div>
+                    <label for="m-name" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">Name</label>
+                    <input id="m-name" type="text" autocomplete="off" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-orange-400" placeholder="e.g. Madrid">
+                </div>
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label for="m-lat" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">Latitude</label>
+                        <input id="m-lat" type="number" step="0.0001" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-orange-400" placeholder="40.4168">
+                    </div>
+                    <div>
+                        <label for="m-lng" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">Longitude</label>
+                        <input id="m-lng" type="number" step="0.0001" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-orange-400" placeholder="-3.7038">
+                    </div>
+                </div>
+                <div>
+                    <label for="m-color" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">Color</label>
+                    <input id="m-color" type="color" value="#ffffff" class="w-full h-9 rounded cursor-pointer">
+                </div>
+            </div>
+            <div class="flex gap-2 mt-5">
+                <button id="m-cancel" class="flex-1 py-2 text-sm rounded bg-slate-700 hover:bg-slate-600 transition">Cancel</button>
+                <button id="m-add"    class="flex-1 py-2 text-sm rounded bg-orange-500 hover:bg-orange-400 text-white font-medium transition">Add hub</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Connection modal -->
+    <div id="conn-modal" class="fixed inset-0 z-50 hidden bg-black/70 backdrop-blur-sm flex items-center justify-center p-4">
+        <div class="bg-slate-800 border border-slate-700 rounded-lg p-6 w-full max-w-sm shadow-2xl">
+            <h3 class="text-lg font-bold text-white mb-1">Add connection</h3>
+            <p id="cm-hint" class="text-xs text-slate-400 mb-4">Pick two hubs to draw a line between.</p>
+            <div class="space-y-3">
+                <div>
+                    <label for="cm-from" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">From</label>
+                    <select id="cm-from" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-orange-400"></select>
+                </div>
+                <div>
+                    <label for="cm-to" class="text-xs uppercase tracking-wide text-slate-400 block mb-1">To</label>
+                    <select id="cm-to" class="w-full bg-slate-900 border border-slate-700 rounded px-3 py-2 text-sm text-slate-100 focus:outline-none focus:border-orange-400"></select>
+                </div>
+            </div>
+            <div class="flex gap-2 mt-5">
+                <button id="cm-cancel" class="flex-1 py-2 text-sm rounded bg-slate-700 hover:bg-slate-600 transition">Cancel</button>
+                <button id="cm-add"    class="flex-1 py-2 text-sm rounded bg-orange-500 hover:bg-orange-400 text-white font-medium transition">Add</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Vendor libs (local) -->
+    <script src="../dist/main.min.js"></script>
+
+    <!-- Playground logic -->
+    <script>
+        const INITIAL_HUBS = [
+            { name: 'Berlin',        lat: 52.52,    lng: 13.405   },
+            { name: 'London',        lat: 51.5074,  lng: -0.1278  },
+            { name: 'New York',      lat: 40.7128,  lng: -74.006  },
+            { name: 'San Francisco', lat: 37.7749,  lng: -122.419 },
+            { name: 'Tokyo',         lat: 35.6762,  lng: 139.6503 },
+            { name: 'Dubai',         lat: 25.276,   lng: 55.2962  },
+            { name: 'Sydney',        lat: -33.8688, lng: 151.2093 },
+            { name: 'Sao Paulo',     lat: -23.5505, lng: -46.6333 }
+        ];
+        const INITIAL_CONNECTIONS = [
+            { from: 'Berlin',        to: ['New York', 'Tokyo', 'London', 'Dubai'] },
+            { from: 'Sao Paulo',     to: 'London' },
+            { from: 'San Francisco', to: 'Sydney' }
+        ];
+        // Mutable state for the editor — these get pushed into globe via setters on every change.
+        let hubs        = INITIAL_HUBS.map(h => Object.assign({}, h));
+        let connections = INITIAL_CONNECTIONS.map(c => ({ from: c.from, to: Array.isArray(c.to) ? c.to.slice() : c.to }));
+        // For the playground UI we store connections as flat `{from, to}` pairs (one entry per arc).
+        // Expand any array `to` into individual entries:
+        connections = connections.flatMap(c => Array.isArray(c.to) ? c.to.map(t => ({ from: c.from, to: t })) : [c]);
+
+        const DEFAULT_STATE = {
+            colorGlobe:      '#004972',
+            colorAccent:     '#F39323',
+            colorStroke:     '#ffb85c',
+            colorAtmosphere: '#1d6791',
+            colorWireframe:  '#ffffff',
+            colorHub:        '#ffffff',
+            colorArc:        '#ffaa3c',
+            globeOpacity:    1,
+            wfOpacity:       0.55,
+            wireframeOn:     true,
+            atmosphereOn:    true,
+            countriesOn:     true,
+            scale:           1,
+            padding:         18,
+            overflow:        80,
+            rotationOn:      true,
+            rotationSpeed:   0.55,
+            interactionOn:   true,
+            pointsOn:        true,
+            ringsOn:         true,
+            arcsOn:          true
+        };
+
+        // Build the initial globe once. Subsequent control changes use live setters
+        // (no destroy/recreate, no flicker).
+        const globe = new BrandGlobe({
+            container: '#globe-container',
+            padding:   DEFAULT_STATE.padding,
+            overflow:  DEFAULT_STATE.overflow,
+            scale:     DEFAULT_STATE.scale,
+            colors: {
+                globe:      DEFAULT_STATE.colorGlobe,
+                accent:     DEFAULT_STATE.colorAccent,
+                stroke:     DEFAULT_STATE.colorStroke,
+                atmosphere: DEFAULT_STATE.colorAtmosphere,
+                arcStart:   DEFAULT_STATE.colorArc,
+                arcEnd:     DEFAULT_STATE.colorArc,
+                hubPoint:   DEFAULT_STATE.colorHub,
+                hubRing:    DEFAULT_STATE.colorHub
+            },
+            globe:       { opacity: DEFAULT_STATE.globeOpacity, shininess: 14 },
+            atmosphere:  { enabled: DEFAULT_STATE.atmosphereOn, altitude: 0.22 },
+            rotation:    { enabled: DEFAULT_STATE.rotationOn, speed: DEFAULT_STATE.rotationSpeed },
+            interaction: { enabled: DEFAULT_STATE.interactionOn },
+            initialView: { lat: 18, lng: 18, altitude: 1.7 },
+            polygons: {
+                enabled:    DEFAULT_STATE.countriesOn,
+                style:      'filled',
+                altitude:   0.008,
+                capOpacity: 0.88,
+                wireframe:  { enabled: DEFAULT_STATE.wireframeOn, color: DEFAULT_STATE.colorWireframe, opacity: DEFAULT_STATE.wfOpacity }
+            },
+            arcs:   { enabled: DEFAULT_STATE.arcsOn, strokeWidth: 0.55, dashLength: 1, dashGap: 0, animateTime: 0, altitudeAutoScale: 0.45 },
+            points: { enabled: DEFAULT_STATE.pointsOn, radius: 0.55, altitude: 0.01 },
+            rings:  { enabled: DEFAULT_STATE.ringsOn, maxRadius: 3, propagationSpeed: 1.6, repeatPeriod: 1800 },
+            hubs:        hubs,
+            connections: connections
+        });
+
+        // Helper — wire a control to a BrandGlobe setter
+        function bind(id, setter, parser, readoutId, formatter) {
+            const el = document.getElementById(id);
+            const readout = readoutId ? document.getElementById(readoutId) : null;
+            const handler = () => {
+                let val;
+                if (el.type === 'checkbox')   val = el.checked;
+                else if (el.type === 'range') val = parser ? parser(el.value) : parseFloat(el.value);
+                else                          val = el.value;
+                setter.call(globe, val);
+                if (readout) readout.textContent = formatter ? formatter(val) : val;
+            };
+            el.addEventListener('input', handler);
+            el.addEventListener('change', handler);
+        }
+
+        // Colors — live, no rebuild
+        bind('c-globe',      globe.setGlobeColor);
+        bind('c-accent',     globe.setAccentColor);
+        bind('c-stroke',     globe.setStrokeColor);
+        bind('c-atmosphere', globe.setAtmosphereColor);
+        bind('c-wireframe',  globe.setWireframeColor);
+        bind('c-hub',        globe.setHubColor);
+        bind('c-arc',        globe.setArcColor);
+
+        // Sliders — live
+        bind('r-globe-opacity',  globe.setGlobeOpacity,     parseFloat, 'v-globe-opacity',  v => v.toFixed(2));
+        bind('r-wf-opacity',     globe.setWireframeOpacity, parseFloat, 'v-wf-opacity',     v => v.toFixed(2));
+        bind('r-scale',          globe.setScale,            parseFloat, 'v-scale',          v => v.toFixed(2));
+        bind('r-padding',        globe.setPadding,          parseInt,   'v-padding',        v => v + ' px');
+        bind('r-overflow',       globe.setOverflow,         parseInt,   'v-overflow',       v => v + ' px');
+        bind('r-rotation-speed', globe.setRotationSpeed,    parseFloat, 'v-rotation-speed', v => v.toFixed(2));
+
+        // Toggles — live
+        bind('t-wireframe',   globe.setWireframeEnabled);
+        bind('t-atmosphere',  globe.setAtmosphereEnabled);
+        bind('t-countries',   globe.setBordersEnabled);
+        bind('t-rotation',    globe.setRotation);
+        bind('t-interaction', globe.setInteraction);
+        bind('t-points',      globe.setPointsEnabled);
+        bind('t-rings',       globe.setRingsEnabled);
+        bind('t-arcs',        globe.setArcsEnabled);
+
+        // Reset button — apply all defaults via setters, update UI
+        document.getElementById('btn-reset').addEventListener('click', () => {
+            const d = DEFAULT_STATE;
+            globe.setGlobeColor(d.colorGlobe);
+            globe.setAccentColor(d.colorAccent);
+            globe.setStrokeColor(d.colorStroke);
+            globe.setAtmosphereColor(d.colorAtmosphere);
+            globe.setWireframeColor(d.colorWireframe);
+            globe.setHubColor(d.colorHub);
+            globe.setArcColor(d.colorArc);
+            globe.setGlobeOpacity(d.globeOpacity);
+            globe.setWireframeOpacity(d.wfOpacity);
+            globe.setScale(d.scale);
+            globe.setPadding(d.padding);
+            globe.setOverflow(d.overflow);
+            globe.setRotationSpeed(d.rotationSpeed);
+            globe.setWireframeEnabled(d.wireframeOn);
+            globe.setAtmosphereEnabled(d.atmosphereOn);
+            globe.setBordersEnabled(d.countriesOn);
+            globe.setRotation(d.rotationOn);
+            globe.setInteraction(d.interactionOn);
+            globe.setPointsEnabled(d.pointsOn);
+            globe.setRingsEnabled(d.ringsOn);
+            globe.setArcsEnabled(d.arcsOn);
+            // Sync UI
+            document.getElementById('c-globe').value      = d.colorGlobe;
+            document.getElementById('c-accent').value     = d.colorAccent;
+            document.getElementById('c-stroke').value     = d.colorStroke;
+            document.getElementById('c-atmosphere').value = d.colorAtmosphere;
+            document.getElementById('c-wireframe').value  = d.colorWireframe;
+            document.getElementById('c-hub').value        = d.colorHub;
+            document.getElementById('c-arc').value        = d.colorArc;
+            document.getElementById('r-globe-opacity').value  = d.globeOpacity;
+            document.getElementById('r-wf-opacity').value     = d.wfOpacity;
+            document.getElementById('r-scale').value          = d.scale;
+            document.getElementById('r-padding').value        = d.padding;
+            document.getElementById('r-overflow').value       = d.overflow;
+            document.getElementById('r-rotation-speed').value = d.rotationSpeed;
+            document.getElementById('t-wireframe').checked   = d.wireframeOn;
+            document.getElementById('t-atmosphere').checked  = d.atmosphereOn;
+            document.getElementById('t-countries').checked   = d.countriesOn;
+            document.getElementById('t-rotation').checked    = d.rotationOn;
+            document.getElementById('t-interaction').checked = d.interactionOn;
+            document.getElementById('t-points').checked      = d.pointsOn;
+            document.getElementById('t-rings').checked       = d.ringsOn;
+            document.getElementById('t-arcs').checked        = d.arcsOn;
+            document.getElementById('v-globe-opacity').textContent  = d.globeOpacity.toFixed(2);
+            document.getElementById('v-wf-opacity').textContent     = d.wfOpacity.toFixed(2);
+            document.getElementById('v-scale').textContent          = d.scale.toFixed(2);
+            document.getElementById('v-padding').textContent        = d.padding + ' px';
+            document.getElementById('v-overflow').textContent       = d.overflow + ' px';
+            document.getElementById('v-rotation-speed').textContent = d.rotationSpeed.toFixed(2);
+        });
+
+        // ─── Hubs / Connections editor ───────────────────────────────────────
+        const hubsListEl = document.getElementById('hubs-list');
+        const connsListEl = document.getElementById('conns-list');
+
+        function escapeHTML(s) {
+            return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+        }
+
+        function renderHubs() {
+            hubsListEl.innerHTML = hubs.map((h, i) => {
+                const swatch = h.color ? `<span class="inline-block w-2.5 h-2.5 rounded-full mr-1.5 align-middle" style="background:${h.color}"></span>` : '';
+                return `
+                <li class="flex items-center justify-between gap-2 py-1 border-b border-slate-700/40">
+                    <button data-i="${i}" class="hub-fly truncate text-left flex-1 hover:text-orange-400">
+                        ${swatch}<span class="font-medium">${escapeHTML(h.name)}</span>
+                        <span class="text-slate-500"> ${h.lat.toFixed(2)}, ${h.lng.toFixed(2)}</span>
+                    </button>
+                    <button data-i="${i}" class="hub-rm text-slate-500 hover:text-red-400 text-base leading-none px-1">&times;</button>
+                </li>`;
+            }).join('') || '<li class="text-slate-500 italic py-1">no hubs</li>';
+        }
+
+        function renderConnections() {
+            connsListEl.innerHTML = connections.map((c, i) => `
+                <li class="flex items-center justify-between gap-2 py-1 border-b border-slate-700/40">
+                    <span class="truncate">
+                        <span class="font-medium">${escapeHTML(c.from)}</span>
+                        <span class="text-slate-500"> → </span>
+                        <span class="font-medium">${escapeHTML(c.to)}</span>
+                    </span>
+                    <button data-i="${i}" class="conn-rm text-slate-500 hover:text-red-400 text-base leading-none px-1">&times;</button>
+                </li>
+            `).join('') || '<li class="text-slate-500 italic py-1">no connections</li>';
+        }
+
+        function syncGlobeHubs()        { globe.setHubs(hubs); }
+        function syncGlobeConnections() { globe.setConnections(connections); }
+
+        renderHubs();
+        renderConnections();
+
+        function addHub(name, lat, lng, color) {
+            if (!name || isNaN(lat) || isNaN(lng)) return false;
+            if (hubs.some(h => h.name === name)) {
+                alert('A hub named "' + name + '" already exists.');
+                return false;
+            }
+            const hub = { name, lat, lng };
+            if (color && color !== '#ffffff') hub.color = color;
+            hubs.push(hub);
+            renderHubs();
+            syncGlobeHubs();
+            return true;
+        }
+
+        // ─── Hub modal ───────────────────────────────────────────────────────
+        const hubModal = document.getElementById('hub-modal');
+        const mName    = document.getElementById('m-name');
+        const mLat     = document.getElementById('m-lat');
+        const mLng     = document.getElementById('m-lng');
+        const mColor   = document.getElementById('m-color');
+        const mHint    = document.getElementById('m-hint');
+
+        function openHubModal(prefill = {}) {
+            mName.value  = prefill.name || '';
+            mLat.value   = prefill.lat != null ? prefill.lat.toFixed(4) : '';
+            mLng.value   = prefill.lng != null ? prefill.lng.toFixed(4) : '';
+            mColor.value = prefill.color || '#ffffff';
+            mHint.textContent = prefill.lat != null
+                ? 'Coordinates filled from globe click — adjust if you like.'
+                : 'Search a place or enter coordinates manually.';
+            document.getElementById('m-search').value = '';
+            document.getElementById('m-search-results').classList.add('hidden');
+            hubModal.classList.remove('hidden');
+            setTimeout(() => (prefill.lat != null ? mName : document.getElementById('m-search')).focus(), 50);
+        }
+        function closeHubModal() { hubModal.classList.add('hidden'); }
+
+        // Nominatim search (OpenStreetMap) — free, rate-limited. Requires http(s) origin;
+        // on file:// some browsers may block the request.
+        async function searchPlace() {
+            const q = document.getElementById('m-search').value.trim();
+            const ul = document.getElementById('m-search-results');
+            if (!q) return;
+            ul.innerHTML = '<li class="text-slate-500 italic px-2 py-1">Searching…</li>';
+            ul.classList.remove('hidden');
+            try {
+                const res = await fetch('https://nominatim.openstreetmap.org/search?q=' + encodeURIComponent(q) + '&format=json&limit=5');
+                const list = await res.json();
+                if (!list.length) {
+                    ul.innerHTML = '<li class="text-slate-500 italic px-2 py-1">No results</li>';
+                    return;
+                }
+                ul.innerHTML = list.map(r => {
+                    const short = (r.name || r.display_name.split(',')[0]).trim();
+                    return `<li>
+                        <button data-lat="${r.lat}" data-lng="${r.lon}" data-name="${escapeHTML(short)}"
+                            class="m-pick w-full text-left py-1.5 px-2 hover:bg-slate-700 transition">
+                            <div class="font-medium text-slate-100">${escapeHTML(short)}</div>
+                            <div class="text-slate-500 text-[10px] truncate">${escapeHTML(r.display_name)}</div>
+                        </button>
+                    </li>`;
+                }).join('');
+            } catch (err) {
+                ul.innerHTML = '<li class="text-red-400 italic px-2 py-1">Search failed — host the demo on http(s) to use it.</li>';
+            }
+        }
+        document.getElementById('m-search-go').addEventListener('click', searchPlace);
+        document.getElementById('m-search').addEventListener('keydown', e => {
+            if (e.key === 'Enter') { e.preventDefault(); e.stopPropagation(); searchPlace(); }
+        });
+        document.getElementById('m-search-results').addEventListener('click', e => {
+            const btn = e.target.closest('.m-pick');
+            if (!btn) return;
+            mName.value = btn.dataset.name;
+            mLat.value  = parseFloat(btn.dataset.lat).toFixed(4);
+            mLng.value  = parseFloat(btn.dataset.lng).toFixed(4);
+            document.getElementById('m-search-results').classList.add('hidden');
+            document.getElementById('m-search').value = '';
+        });
+
+        document.getElementById('btn-hub-modal').addEventListener('click', () => openHubModal());
+        document.getElementById('m-cancel').addEventListener('click', closeHubModal);
+        document.getElementById('m-add').addEventListener('click', () => {
+            if (addHub(mName.value.trim(), parseFloat(mLat.value), parseFloat(mLng.value), mColor.value)) {
+                closeHubModal();
+            }
+        });
+        hubModal.addEventListener('click', (e) => { if (e.target === hubModal) closeHubModal(); });
+        document.addEventListener('keydown', (e) => {
+            if (hubModal.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeHubModal();
+            if (e.key === 'Enter' && e.target.tagName === 'INPUT' && e.target.id !== 'm-search') {
+                document.getElementById('m-add').click();
+            }
+        });
+
+        // ─── Pin-on-globe placement (opt-in via button) ──────────────────────
+        let pinMode = false;
+        const pinBtn = document.getElementById('btn-pin-mode');
+        const pinLabel = document.getElementById('pin-mode-label');
+        const stageEl = document.querySelector('#globe-container > div');
+        function setPinMode(on) {
+            pinMode = on;
+            pinBtn.classList.toggle('bg-orange-500', on);
+            pinBtn.classList.toggle('hover:bg-orange-400', on);
+            pinBtn.classList.toggle('text-white', on);
+            pinBtn.classList.toggle('bg-slate-700', !on);
+            pinBtn.classList.toggle('hover:bg-slate-600', !on);
+            pinLabel.textContent = on ? 'Click globe to place…' : 'Drop on globe';
+            if (stageEl) stageEl.style.cursor = on ? 'crosshair' : '';
+            // Pause auto-rotation while placing — restore the user's saved preference after.
+            globe.globe.controls().autoRotate = on ? false : globe.options.rotation.enabled;
+        }
+        pinBtn.addEventListener('click', () => setPinMode(!pinMode));
+
+        // Combined click handler — fires for both ocean (globe sphere) and land (polygons).
+        globe.onClick(({ lat, lng }) => {
+            if (!pinMode || lat == null || lng == null) return;
+            setPinMode(false);
+            openHubModal({ lat, lng });
+        });
+
+        // Click on hub row: fly there. Click ×: remove.
+        hubsListEl.addEventListener('click', (e) => {
+            const rm = e.target.closest('.hub-rm');
+            if (rm) {
+                const idx = +rm.dataset.i;
+                const removed = hubs.splice(idx, 1)[0];
+                connections = connections.filter(c => c.from !== removed.name && c.to !== removed.name);
+                renderHubs();
+                renderConnections();
+                syncGlobeHubs();
+                syncGlobeConnections();
+                return;
+            }
+            const fly = e.target.closest('.hub-fly');
+            if (fly) {
+                const idx = +fly.dataset.i;
+                if (hubs[idx]) globe.flyTo(hubs[idx].name);
+            }
+        });
+
+        // ─── Connection modal ────────────────────────────────────────────────
+        const connModal = document.getElementById('conn-modal');
+        const cmFrom    = document.getElementById('cm-from');
+        const cmTo      = document.getElementById('cm-to');
+        const cmHint    = document.getElementById('cm-hint');
+
+        function populateConnFrom() {
+            cmFrom.innerHTML = hubs.length
+                ? hubs.map(h => `<option value="${escapeHTML(h.name)}">${escapeHTML(h.name)}</option>`).join('')
+                : '<option disabled>No hubs yet</option>';
+        }
+
+        function populateConnTo() {
+            // Exclude: the currently-selected `from` AND any hub already connected from it.
+            const from = cmFrom.value;
+            const existingTargets = new Set(connections.filter(c => c.from === from).map(c => c.to));
+            const options = hubs.filter(h => h.name !== from && !existingTargets.has(h.name));
+            if (options.length === 0) {
+                cmTo.innerHTML = '<option disabled>No remaining hubs</option>';
+                cmHint.textContent = 'All other hubs are already linked from this source.';
+            } else {
+                cmTo.innerHTML = options.map(h => `<option value="${escapeHTML(h.name)}">${escapeHTML(h.name)}</option>`).join('');
+                cmHint.textContent = 'Pick two hubs to draw a line between.';
+            }
+        }
+
+        function openConnModal() {
+            if (hubs.length < 2) {
+                alert('Add at least two hubs first.');
+                return;
+            }
+            populateConnFrom();
+            populateConnTo();
+            connModal.classList.remove('hidden');
+            setTimeout(() => cmFrom.focus(), 50);
+        }
+        function closeConnModal() { connModal.classList.add('hidden'); }
+
+        cmFrom.addEventListener('change', populateConnTo);
+        document.getElementById('btn-conn-modal').addEventListener('click', openConnModal);
+        document.getElementById('cm-cancel').addEventListener('click', closeConnModal);
+        document.getElementById('cm-add').addEventListener('click', () => {
+            const from = cmFrom.value;
+            const to   = cmTo.value;
+            if (!from || !to || from === to) return;
+            if (cmTo.options[cmTo.selectedIndex]?.disabled) return;
+            connections.push({ from, to });
+            renderConnections();
+            syncGlobeConnections();
+            // Refresh the `to` list — the newly-added target should now be excluded.
+            populateConnTo();
+            if (cmTo.options[0]?.disabled) closeConnModal();
+        });
+        connModal.addEventListener('click', (e) => { if (e.target === connModal) closeConnModal(); });
+        document.addEventListener('keydown', (e) => {
+            if (connModal.classList.contains('hidden')) return;
+            if (e.key === 'Escape') closeConnModal();
+            if (e.key === 'Enter') document.getElementById('cm-add').click();
+        });
+
+        // Remove connection (delegated)
+        connsListEl.addEventListener('click', (e) => {
+            const btn = e.target.closest('.conn-rm');
+            if (!btn) return;
+            connections.splice(+btn.dataset.i, 1);
+            renderConnections();
+            syncGlobeConnections();
+        });
+
+        // ─── Export current config ───────────────────────────────────────────
+        function buildExport() {
+            const get  = id => document.getElementById(id).value;
+            const num  = id => parseFloat(get(id));
+            const int  = id => parseInt(get(id), 10);
+            const chk  = id => document.getElementById(id).checked;
+            // Pick only the fields we care about — globe.gl mutates hub objects with internal
+            // Three.js refs (`__threeObj` etc.) that would otherwise bloat the output.
+            const pick = (obj, keys) => keys.reduce((o, k) => (k in obj ? (o[k] = obj[k], o) : o), {});
+            const cleanHubs = hubs.map(h => pick(h, ['name', 'lat', 'lng', 'color']));
+            const cleanConns = connections.map(c => pick(c, ['from', 'to']));
+            const arrayLit = (arr, indent) => {
+                const pad = ' '.repeat(indent);
+                if (arr.length === 0) return '[]';
+                return '[\n' + arr.map(o => pad + '    ' + JSON.stringify(o)).join(',\n') + '\n' + pad + ']';
+            };
+            return [
+                "new BrandGlobe({",
+                "    container: '#globe-container',",
+                "    padding:   " + int('r-padding') + ",",
+                "    overflow:  " + int('r-overflow') + ",",
+                "    scale:     " + num('r-scale') + ",",
+                "    colors: {",
+                "        globe:      '" + get('c-globe')      + "',",
+                "        accent:     '" + get('c-accent')     + "',",
+                "        stroke:     '" + get('c-stroke')     + "',",
+                "        atmosphere: '" + get('c-atmosphere') + "',",
+                "        arcStart:   '" + get('c-arc')        + "',",
+                "        arcEnd:     '" + get('c-arc')        + "',",
+                "        hubPoint:   '" + get('c-hub')        + "',",
+                "        hubRing:    '" + get('c-hub')        + "'",
+                "    },",
+                "    globe:       { opacity: " + num('r-globe-opacity') + ", shininess: 14 },",
+                "    atmosphere:  { enabled: " + chk('t-atmosphere') + ", altitude: 0.22 },",
+                "    rotation:    { enabled: " + chk('t-rotation') + ", speed: " + num('r-rotation-speed') + " },",
+                "    interaction: { enabled: " + chk('t-interaction') + " },",
+                "    initialView: { lat: 18, lng: 18, altitude: 1.7 },",
+                "    polygons: {",
+                "        enabled:    " + chk('t-countries') + ",",
+                "        style:      'filled',",
+                "        altitude:   0.008,",
+                "        capOpacity: 0.88,",
+                "        wireframe:  { enabled: " + chk('t-wireframe') + ", color: '" + get('c-wireframe') + "', opacity: " + num('r-wf-opacity') + " }",
+                "    },",
+                "    arcs:   { enabled: " + chk('t-arcs') + ", strokeWidth: 0.55, dashLength: 1, dashGap: 0, animateTime: 0, altitudeAutoScale: 0.45 },",
+                "    points: { enabled: " + chk('t-points') + ", radius: 0.55, altitude: 0.01 },",
+                "    rings:  { enabled: " + chk('t-rings') + ", maxRadius: 3, propagationSpeed: 1.6, repeatPeriod: 1800 },",
+                "    hubs: " + arrayLit(cleanHubs, 4) + ",",
+                "    connections: " + arrayLit(cleanConns, 4),
+                "});"
+            ].join('\n');
+        }
+
+        // Theme presets — apply a set of colors via setters and sync the UI swatches.
+        const THEMES = {
+            brand:  { globe: '#004972', accent: '#F39323', stroke: '#ffb85c', atmosphere: '#1d6791', wireframe: '#ffffff', hub: '#ffffff', arc: '#ffaa3c' },
+            dark:   { globe: '#0b1220', accent: '#00d4ff', stroke: '#00d4ff', atmosphere: '#1e293b', wireframe: '#1e3a5f', hub: '#00d4ff', arc: '#00d4ff' },
+            sunset: { globe: '#2a1a3a', accent: '#ff5e7e', stroke: '#ffb86b', atmosphere: '#6b2d6b', wireframe: '#ffd4a3', hub: '#fff2c4', arc: '#ffb86b' },
+            ocean:  { globe: '#003b46', accent: '#07575b', stroke: '#66a5ad', atmosphere: '#003b46', wireframe: '#c4dfe6', hub: '#ffffff', arc: '#a5d4dc' }
+        };
+        document.querySelectorAll('.theme-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const t = THEMES[btn.dataset.theme];
+                if (!t) return;
+                globe.setGlobeColor(t.globe);
+                globe.setAccentColor(t.accent);
+                globe.setStrokeColor(t.stroke);
+                globe.setAtmosphereColor(t.atmosphere);
+                globe.setWireframeColor(t.wireframe);
+                globe.setHubColor(t.hub);
+                globe.setArcColor(t.arc);
+                document.getElementById('c-globe').value      = t.globe;
+                document.getElementById('c-accent').value     = t.accent;
+                document.getElementById('c-stroke').value     = t.stroke;
+                document.getElementById('c-atmosphere').value = t.atmosphere;
+                document.getElementById('c-wireframe').value  = t.wireframe;
+                document.getElementById('c-hub').value        = t.hub;
+                document.getElementById('c-arc').value        = t.arc;
+            });
+        });
+
+        document.getElementById('btn-copy').addEventListener('click', async () => {
+            const text = buildExport();
+            try {
+                await navigator.clipboard.writeText(text);
+            } catch (_) {
+                // file:// may block clipboard API — fallback
+                const ta = document.createElement('textarea');
+                ta.value = text;
+                ta.style.position = 'fixed';
+                ta.style.left = '-9999px';
+                document.body.appendChild(ta);
+                ta.select();
+                document.execCommand('copy');
+                document.body.removeChild(ta);
+            }
+            const fb = document.getElementById('copy-feedback');
+            fb.classList.remove('hidden');
+            setTimeout(() => fb.classList.add('hidden'), 1500);
+        });
+    </script>
+</body>
+</html>
